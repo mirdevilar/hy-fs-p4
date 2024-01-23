@@ -1,0 +1,29 @@
+{
+  "name": "bloglist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mirdevilar/hy-fs-p3.git"
+  },
+  "author": "alekarhis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mirdevilar/hy-fs-p3/issues"
+  },
+  "homepage": "https://github.com/mirdevilar/hy-fs-p3#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongoose": "^7.6.5"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.0",
+    "nodemon": "^3.0.3"
+  }
+}
