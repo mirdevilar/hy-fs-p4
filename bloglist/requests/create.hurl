@@ -1,0 +1,8 @@
+POST http://localhost:3003/api/blogs/
+{
+  "title": "test",
+  "author": "tester",
+  "url": "http://example.com",
+  "votes": 5
+}
+HTTP 201
