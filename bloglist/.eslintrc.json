@@ -40,10 +40,10 @@
             "error",
             "multi-line"
         ],
-        "arrow-body-style": [
+        "arrow-body-style": 0,/*[
             "error",
             "as-needed"
-        ],
+        ],*/
         "no-lonely-if": [
             "error"
         ],
@@ -84,6 +84,7 @@
         "no-param-reassign": 0,
         "import/no-extraneous-dependencies": 0,
         "no-multiple-empty-lines": 0,
+
         // DEV
         "no-unused-vars": 0,
         "no-console": 0,
