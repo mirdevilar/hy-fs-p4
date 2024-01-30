@@ -7,11 +7,15 @@ router.get('/', async (req, res) => {
   res.json(fetchedBlogs)
 })
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   const blogToSave = new Blog(req.body)
 
-  const savedBlog = await blogToSave.save()
-  res.status(201).json(savedBlog)
+  try {
+    const savedBlog = await blogToSave.save()
+    res.status(201).json(savedBlog)
+  } catch (err) {
+    next(err)
+  }
 })
 
 module.exports = router

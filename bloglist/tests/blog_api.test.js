@@ -28,10 +28,9 @@ const multipleBlogs = [
 beforeEach(async () => {
   await Blog.deleteMany({})
 
-  multipleBlogs.forEach(async (b) => {
-    const blog = new Blog(b)
-    await blog.save()
-  })
+  const blogObjects = multipleBlogs.map((b) => new Blog(b))
+  const promiseArray = blogObjects.map((b) => b.save())
+  await Promise.all(promiseArray)
 })
 
 test('returns correct amount of blogs as json', async () => {
@@ -80,6 +79,32 @@ describe('creation of new blog', () => {
       .post('/api/blogs')
       .send(testBlog)
     expect(res.body.likes).toBe(0)
+  })
+
+  test('if title is missing, error 400', async () => {
+    const testBlog = {
+      author: 'tester',
+      url: 'http://example.com',
+      likes: 5,
+    }
+
+    const res = await api
+      .post('/api/blogs')
+      .send(testBlog)
+      .expect(400)
+  })
+
+  test('if url is missing, error 400', async () => {
+    const testBlog = {
+      title: 'test no url',
+      author: 'tester',
+      likes: 5,
+    }
+
+    const res = await api
+      .post('/api/blogs')
+      .send(testBlog)
+      .expect(400)
   })
 })
 
