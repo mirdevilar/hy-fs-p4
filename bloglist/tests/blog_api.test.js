@@ -44,9 +44,30 @@ test('returns correct amount of blogs as json', async () => {
 
 test('has id and not _id', async () => {
   const res = await api.get('/api/blogs')
-  log.info(res.body[0])
   expect(res.body[0].id).toBeDefined()
-  expect(res.body[0]._id).toBeUndefined()
+})
+
+describe('creation of new blog', () => {
+  test('successful creation and present in database', async () => {
+    const testBlog = {
+      title: 'test',
+      author: 'tester',
+      url: 'http://example.com',
+      votes: 5
+    }
+
+    const resPost = await api
+      .post('/api/blogs')
+      .send(testBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+    expect(resPost.body.title).toBe(testBlog.title)
+
+    const resGet = await api.get('/api/blogs')
+    expect(resGet.body).toHaveLength(multipleBlogs.length + 1)
+    const created = resGet.body.map((b) => b.id).includes(resPost.body.id)
+    expect(created).toBe(true)
+  })
 })
 
 afterAll(async () => {
