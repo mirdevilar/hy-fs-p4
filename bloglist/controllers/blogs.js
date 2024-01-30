@@ -10,12 +10,8 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res, next) => {
   const blogToSave = new Blog(req.body)
 
-  try {
-    const savedBlog = await blogToSave.save()
-    res.status(201).json(savedBlog)
-  } catch (err) {
-    next(err)
-  }
+  const savedBlog = await blogToSave.save()
+  res.status(201).json(savedBlog)
 })
 
 module.exports = router

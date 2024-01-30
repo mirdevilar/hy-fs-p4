@@ -1,21 +1,18 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const morgan = require('morgan')
 const cors = require('cors')
 
+require('express-async-errors')
 const blogsRouter = require('./controllers/blogs')
 
 const Blog = require('./models/blog')
 
 const cfg = require('./utils/config')
 const log = require('./utils/logger')
+const middleware = require('./utils/middleware')
 
 const app = express()
-
-const errorHandler = (err, req, res, next) => {
-  if (err.name === 'ValidationError') {
-    return res.status(400).json({ error: err.message })
-  }
-}
 
 mongoose.connect(cfg.MONGODB_URI)
   .then(() => {
@@ -27,9 +24,10 @@ mongoose.connect(cfg.MONGODB_URI)
 
 app.use(cors())
 app.use(express.json())
+app.use(morgan('tiny'))
 
 app.use(cfg.BLOGS_API_ROOT, blogsRouter)
 
-app.use(errorHandler)
+app.use(middleware.errorHandler)
 
 module.exports = app
