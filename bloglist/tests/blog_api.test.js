@@ -68,6 +68,19 @@ describe('creation of new blog', () => {
     const created = resGet.body.map((b) => b.id).includes(resPost.body.id)
     expect(created).toBe(true)
   })
+
+  test('if likes property missing, default to 0', async () => {
+    const testBlog = {
+      title: 'test likes missing',
+      author: 'tester',
+      url: 'http://example.com',
+    }
+
+    const res = await api
+      .post('/api/blogs')
+      .send(testBlog)
+    expect(res.body.likes).toBe(0)
+  })
 })
 
 afterAll(async () => {
