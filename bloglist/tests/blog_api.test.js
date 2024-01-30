@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const log = require('../utils/logger')
 const app = require('../app')
 
 const api = supertest(app)
@@ -39,6 +40,13 @@ test('returns correct amount of blogs as json', async () => {
     .expect('Content-Type', /application\/json/)
 
   expect(res.body).toHaveLength(2)
+})
+
+test('has id and not _id', async () => {
+  const res = await api.get('/api/blogs')
+  log.info(res.body[0])
+  expect(res.body[0].id).toBeDefined()
+  expect(res.body[0]._id).toBeUndefined()
 })
 
 afterAll(async () => {
