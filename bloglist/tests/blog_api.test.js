@@ -52,7 +52,7 @@ describe('creation of new blog', () => {
       title: 'test',
       author: 'tester',
       url: 'http://example.com',
-      votes: 5
+      likes: 5
     }
 
     const resPost = await api
@@ -105,6 +105,48 @@ describe('creation of new blog', () => {
       .post('/api/blogs')
       .send(testBlog)
       .expect(400)
+  })
+})
+
+describe('deletion of blog', () => {
+  test('if id is valid, success with status 204 and blog is indeed not in db anymore', async () => {
+    const testBlog = {
+      title: 'test',
+      author: 'tester',
+      url: 'http://example.com',
+      likes: 5
+    }
+
+    const resPost = await api.post('/api/blogs').send(testBlog)
+    await api.delete(`/api/blogs/${resPost.body.id}`)
+      .expect(204)
+
+    const resGet = await api.get(`/api/blogs/${resPost.body.id}`)
+      .expect(404)
+  }, 100000)
+
+  test('if inexistent, error 404', async () => {
+    await api.delete('/65b93d62a835776194824980')
+      .expect(404)
+  })
+})
+
+describe('update blog', () => {
+  test('if id is valid, success with status 200 and likes have been updated in db', async () => {
+    const testBlog = {
+      title: 'test',
+      author: 'tester',
+      url: 'http://example.com',
+      likes: 0
+    }
+
+    const resPost = await api.post('/api/blogs').send(testBlog)
+
+    await api.put(`/api/blogs/${resPost.body.id}`).send({ ...resPost.body, likes: resPost.body.likes + 1 })
+      .expect(200)
+
+    const resGet = await api.get(`/api/blogs/${resPost.body.id}`)
+    expect(resGet.body.likes).toBe(resPost.body.likes + 1)
   })
 })
 

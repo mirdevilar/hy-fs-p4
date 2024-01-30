@@ -28,6 +28,7 @@ app.use(morgan('tiny'))
 
 app.use(cfg.BLOGS_API_ROOT, blogsRouter)
 
+app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
 module.exports = app
