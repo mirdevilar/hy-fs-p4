@@ -1,10 +1,13 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
+
 const log = require('../utils/logger')
 const app = require('../app')
 
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const multipleBlogs = [
   {
@@ -26,12 +29,21 @@ const multipleBlogs = [
 ]
 
 beforeEach(async () => {
-  await Blog.deleteMany({})
+  await User.deleteMany({})
 
-  const blogObjects = multipleBlogs.map((b) => new Blog(b))
+  const passwordHash = await bcrypt.hash('porkkana', 10)
+  const user = new User({ username: 'root', passwordHash })
+
+  await user.save()
+
+  await Blog.deleteMany({})
+  const randomUser = await User.findOne({})
+
+  const blogObjects = multipleBlogs.map((b) => new Blog({ ...b, user: randomUser.id }))
+
   const promiseArray = blogObjects.map((b) => b.save())
   await Promise.all(promiseArray)
-})
+}, 100000)
 
 test('returns correct amount of blogs as json', async () => {
   const res = await api.get('/api/blogs')
@@ -45,6 +57,11 @@ test('has id and not _id', async () => {
   const res = await api.get('/api/blogs')
   expect(res.body[0].id).toBeDefined()
 })
+
+test('user ref populated', async () => {
+  const res = await api.get('/api/blogs')
+  expect(res.body[0].user.username).toBeDefined()
+}, 100000)
 
 describe('creation of new blog', () => {
   test('successful creation and present in database', async () => {
@@ -66,6 +83,18 @@ describe('creation of new blog', () => {
     expect(resGet.body).toHaveLength(multipleBlogs.length + 1)
     const created = resGet.body.map((b) => b.id).includes(resPost.body.id)
     expect(created).toBe(true)
+  })
+
+  test('user ref is present', async () => {
+    const testBlog = {
+      title: 'test user ref',
+      author: 'tester',
+      url: 'http://example.com',
+    }
+
+    const res = await api.post('/api/blogs').send(testBlog)
+
+    expect(res.body.user).toBeDefined()
   })
 
   test('if likes property missing, default to 0', async () => {
