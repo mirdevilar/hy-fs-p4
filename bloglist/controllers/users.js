@@ -4,20 +4,24 @@ const router = require('express').Router()
 const User = require('../models/user')
 const log = require('../utils/logger')
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   const { username, name, password } = req.body
-  log.info(req.body)
-  const passwordHash = '5523'//await bcrypt.hash(req.body.password, 10)
+
+  if (!password) {
+    next(new Error('password required'))
+  }
+  if (password.length < 3) {
+    next(new Error('password must be at least 3 characters long'))
+  }
+
+  const passwordHash = await bcrypt.hash(req.body.password, 10)
 
   const userToCreate = { username, name, passwordHash }
-
-  //log.info(userToCreate)
-
   const user = await new User(userToCreate)
 
   const savedUser = await user.save()
 
-  res.status(200).json(savedUser)
+  res.status(201).json(savedUser)
 })
 
 router.get('/', async (req, res) => {

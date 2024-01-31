@@ -10,4 +10,9 @@ const getUserById = async (id) => {
   return user.toJSON()
 }
 
-module.exports = { getAllUsers, getUserById }
+const getUsersByFilter = async (filter) => {
+  const users = await User.find(filter)
+  return users.map((u) => u.toJSON())
+}
+
+module.exports = { getAllUsers, getUserById, getUsersByFilter }
