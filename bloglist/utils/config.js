@@ -7,9 +7,11 @@ const MONGODB_URI = process.env.NODE_ENV === 'test'
   : process.env.MONGODB_URI
 
 const BLOGS_API_ROOT = '/api/blogs/'
+const USERS_API_ROOT = '/api/users/'
 
 module.exports = {
   MONGODB_URI,
   PORT,
   BLOGS_API_ROOT,
+  USERS_API_ROOT,
 }
