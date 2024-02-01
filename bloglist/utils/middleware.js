@@ -9,4 +9,17 @@ const errorHandler = (err, req, res, next) => {
   return res.status(400).json({ error: err.message })
 }
 
-module.exports = { errorHandler, unknownEndpoint }
+const tokenExtractor = (req, res, next) => {
+  const auth = req.get('authorization')
+
+  if (auth && auth.startsWith('Bearer ')) {
+    req.token = auth.replace('Bearer ', '')
+  }
+  next()
+}
+
+module.exports = {
+  errorHandler,
+  unknownEndpoint,
+  tokenExtractor
+}

@@ -65,6 +65,11 @@ test('user ref populated', async () => {
 
 describe('creation of new blog', () => {
   test('successful creation and present in database', async () => {
+    const loginRes = await api.post('/api/login/')
+      .send({ username: 'root', password: 'porkkana' })
+
+    const { token } = loginRes.body
+
     const testBlog = {
       title: 'test',
       author: 'tester',
@@ -74,6 +79,7 @@ describe('creation of new blog', () => {
 
     const resPost = await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(testBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)

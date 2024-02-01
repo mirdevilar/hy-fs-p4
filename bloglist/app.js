@@ -25,6 +25,7 @@ mongoose.connect(cfg.MONGODB_URI)
 app.use(cors())
 app.use(express.json())
 app.use(morgan('tiny'))
+app.use(cfg.BLOGS_API_ROOT, middleware.tokenExtractor)
 
 app.use(cfg.BLOGS_API_ROOT, blogsRouter)
 app.use(cfg.USERS_API_ROOT, usersRouter)
