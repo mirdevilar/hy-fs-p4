@@ -8,6 +8,7 @@ const helper = require('../utils/test_helper')
 
 const api = supertest(app)
 const User = require('../models/user')
+const Blog = require('../models/blog')
 
 describe('when there is 1 user in db', () => {
   beforeEach(async () => {
@@ -43,7 +44,6 @@ describe('when there is 1 user in db', () => {
 
     const res = await api.post('/api/users').send(testUser)
       .expect(400)
-    log.info(res.body)
 
     const checkUsers = await helper.getUsersByFilter({ name: testUser.name })
     expect(checkUsers).toHaveLength(0)
@@ -58,7 +58,6 @@ describe('when there is 1 user in db', () => {
 
     const res = await api.post('/api/users').send(testUser)
       .expect(400)
-    log.info(res.body)
 
     const checkUsers = await helper.getUsersByFilter({ name: testUser.name })
     expect(checkUsers).toHaveLength(0)
@@ -73,7 +72,6 @@ describe('when there is 1 user in db', () => {
 
     const res = await api.post('/api/users').send(testUser)
       .expect(400)
-    log.info(res.body)
 
     const checkUsers = await helper.getUsersByFilter({ name: testUser.name })
     expect(checkUsers).toHaveLength(0)
@@ -87,7 +85,6 @@ describe('when there is 1 user in db', () => {
 
     const res = await api.post('/api/users').send(testUser)
       .expect(400)
-    log.info(res.body)
 
     const checkUsers = await helper.getUsersByFilter({ name: testUser.name })
     expect(checkUsers).toHaveLength(0)
@@ -102,10 +99,22 @@ describe('when there is 1 user in db', () => {
 
     const res = await api.post('/api/users').send(testUser)
       .expect(400)
-    log.info(res.body)
 
     const checkUsers = await helper.getUsersByFilter({ name: testUser.name })
     expect(checkUsers).toHaveLength(0)
+  })
+
+  test('get all -> BLOGS NESTED', async () => {
+    await Blog.deleteMany({})
+    await helper.createTestBlog()
+
+    const res = await api.get('/api/users')
+    const test = await api.get('/api/blogs')
+
+    log.info(res.body[0])
+    log.info(test.body[0])
+
+    expect(res.body[0].blogs[0].title).toBeDefined()
   })
 })
 

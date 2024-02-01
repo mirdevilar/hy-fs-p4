@@ -4,7 +4,7 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 
 router.get('/', async (req, res) => {
-  const fetchedBlogs = await Blog.find({}).populate('user')
+  const fetchedBlogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   res.json(fetchedBlogs)
 })
 
@@ -17,16 +17,18 @@ router.get('/:id', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-  const randomUser = await User.findOne({})
+  const user = await User.findOne({})
 
-  const blog = {
+  const blog = new Blog({
     ...req.body,
-    user: randomUser._id
-  }
+    user: user._id
+  })
 
-  const blogObject = new Blog(blog)
+  const savedBlog = await blog.save()
 
-  const savedBlog = await blogObject.save()
+  user.blogs = user.blogs.concat(savedBlog._id)
+  await user.save()
+
   res.status(201).json(savedBlog)
 })
 
