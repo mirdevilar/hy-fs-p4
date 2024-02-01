@@ -6,6 +6,7 @@ const cors = require('cors')
 require('express-async-errors')
 const blogsRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
 
 const cfg = require('./utils/config')
 const log = require('./utils/logger')
@@ -27,6 +28,7 @@ app.use(morgan('tiny'))
 
 app.use(cfg.BLOGS_API_ROOT, blogsRouter)
 app.use(cfg.USERS_API_ROOT, usersRouter)
+app.use(cfg.LOGIN_API_ROOT, loginRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
