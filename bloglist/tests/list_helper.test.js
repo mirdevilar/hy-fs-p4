@@ -86,23 +86,28 @@ describe('total likes', () => {
 
 describe('most likes', () => {
   test('when list has one blog, it is the top liked', () => {
-    expect(listHelper.mostLikes(oneBlogList)).toEqual(oneBlogList[0])
+    expect(listHelper.favoriteBlog(oneBlogList)).toEqual(oneBlogList[0])
   })
 
   test('successfully gets most liked blog', () => {
-    expect(listHelper.mostLikes(multipleBlogsList)).toEqual(multipleBlogsList[2])
+    expect(listHelper.favoriteBlog(multipleBlogsList)).toEqual(multipleBlogsList[2])
   })
 
   test('when list is empty, return undefined', () => {
-    expect(listHelper.mostLikes([])).toEqual(undefined)
+    expect(listHelper.favoriteBlog([])).toEqual(undefined)
   })
 })
 
-describe('author with most blogs', () => {
-  test('test', () => {
-    const result = listHelper.mostBlogs(multipleBlogsList)
+test('author with most blogs', () => {
+  const result = listHelper.mostBlogs(multipleBlogsList)
 
-    expect(result.author).toBe('Robert C. Martin')
-    expect(result.blogs).toBe(3)
-  })
+  expect(result.author).toBe('Robert C. Martin')
+  expect(result.blogs).toBe(3)
+})
+
+test('author with most likes', () => {
+  const result = listHelper.mostLikes(multipleBlogsList)
+
+  expect(result.author).toBe('Edsger W. Dijkstra')
+  expect(result.blogs).toBe(17)
 })

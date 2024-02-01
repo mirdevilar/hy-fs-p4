@@ -9,7 +9,7 @@ const totalLikes = (blogs) => {
   return likes
 }
 
-const mostLikes = (blogs) => {
+const favoriteBlog = (blogs) => {
   const mostLikesIndex = blogs.reduce((maxLikesIndex, blog, i) => {
     return blog.likes > blogs[maxLikesIndex].likes ? i : maxLikesIndex
   }, 0)
@@ -24,4 +24,9 @@ const mostBlogs = (blogs) => {
   return { author: maxKey, blogs: counts[maxKey] }
 }
 
-module.exports = { dummy, totalLikes, mostLikes, mostBlogs }
+const mostLikes = (blogs) => {
+  const keys = _.map(_.keyBy(blogs, 'author'), 'likes')
+  console.log(keys)
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes }
