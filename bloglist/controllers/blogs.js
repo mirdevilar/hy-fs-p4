@@ -41,10 +41,23 @@ router.post('/', async (req, res) => {
 })
 
 router.delete('/:id', async (req, res) => {
-  const result = await Blog.findByIdAndRemove(req.params.id)
-  if (result) {
-    res.status(204).end()
+  const decodedToken = jwt.verify(req.token, process.env.SECRET)
+
+  console.log(decodedToken)
+
+  if (!decodedToken.id) {
+    return res.status(401).json({ error: 'invalid token' })
   }
+
+  const blog = await Blog.findById(req.params.id)
+
+  if (decodedToken.id === blog.user.toString()) {
+    await Blog.deleteOne({ _id: blog.id })
+    res.status(204).end()
+  } else {
+    return res.status(401).json({ error: 'valid but unauthorized token' })
+  }
+
   res.status(404).end()
 })
 

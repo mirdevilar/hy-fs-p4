@@ -144,7 +144,15 @@ describe('creation of new blog', () => {
 })
 
 describe('deletion of blog', () => {
-  test('if id is valid, success with status 204 and blog is indeed not in db anymore', async () => {
+  let token
+  let blog
+
+  beforeEach(async () => {
+    const loginRes = await api.post('/api/login/')
+      .send({ username: 'root', password: 'porkkana' })
+
+    token = loginRes.body.token
+
     const testBlog = {
       title: 'test',
       author: 'tester',
@@ -153,16 +161,51 @@ describe('deletion of blog', () => {
     }
 
     const resPost = await api.post('/api/blogs').send(testBlog)
-    await api.delete(`/api/blogs/${resPost.body.id}`)
+      .set('Authorization', `Bearer ${token}`)
+    blog = resPost.body
+  })
+
+  test('if id is valid, success with status 204 and blog is indeed not in db anymore', async () => {
+    await api.delete(`/api/blogs/${blog.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(204)
 
-    const resGet = await api.get(`/api/blogs/${resPost.body.id}`)
+    const resGet = await api.get(`/api/blogs/${blog.id}`)
       .expect(404)
   }, 100000)
 
   test('if inexistent, error 404', async () => {
     await api.delete('/65b93d62a835776194824980')
       .expect(404)
+  })
+
+  test('if token invalid, do not delete', async () => {
+    await api.delete(`/api/blogs/${blog.id}`)
+      .set('Authorization', `Bearer ${'wrongtoken'}`)
+
+    await api.get(`/api/blogs/${blog.id}`)
+      .expect(200)
+  })
+
+  test('if wrong token, error 401 and do not delete', async () => {
+    const username = 'wronguser'
+    const password = 'correctpass'
+    const passwordHash = await bcrypt.hash(password, 10)
+    const user = new User({ username, passwordHash })
+
+    await user.save()
+
+    const loginRes = await api.post('/api/login/')
+      .send({ username, password })
+
+    const wrongToken = loginRes.body.token
+
+    await api.delete(`/api/blogs/${blog.id}`)
+      .set('Authorization', `Bearer ${wrongToken}`)
+      .expect(401)
+
+    const resGet = await api.get(`/api/blogs/${blog.id}`)
+      .expect(200)
   })
 })
 
