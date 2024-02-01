@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const log = require('./logger')
 
 const dummy = (blogs) => (1)
@@ -15,4 +17,11 @@ const mostLikes = (blogs) => {
   return blogs[mostLikesIndex]
 }
 
-module.exports = { dummy, totalLikes, mostLikes }
+const mostBlogs = (blogs) => {
+  const authors = blogs.map((b) => b.author)
+  const counts = _.countBy(authors)
+  const maxKey = _.maxBy(_.keys(counts), (k) => counts[k])
+  return { author: maxKey, blogs: counts[maxKey] }
+}
+
+module.exports = { dummy, totalLikes, mostLikes, mostBlogs }
