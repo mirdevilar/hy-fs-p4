@@ -109,5 +109,5 @@ test('author with most likes', () => {
   const result = listHelper.mostLikes(multipleBlogsList)
 
   expect(result.author).toBe('Edsger W. Dijkstra')
-  expect(result.blogs).toBe(17)
+  expect(result.likes).toBe(17)
 })
